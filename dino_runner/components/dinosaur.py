@@ -21,8 +21,8 @@ class Dinosaur(Sprite):
     def __init__(self):
         self.image = RUNNING[0]
         self.image_rect = self.image.get_rect()
-        self.image_rect_x = self.DINO_X_POS
-        self.image_rect_y = self.DINO_Y_POS
+        self.image_rect.x = self.DINO_X_POS
+        self.image_rect.y = self.DINO_Y_POS
         self.step = self.INITIAL_STEP
         self.dino_jump = False
         self.dino_duck = False
@@ -40,7 +40,7 @@ class Dinosaur(Sprite):
             self.dino_jump = True
         if dino_event[pygame.K_DOWN] and not self.dino_jump: 
             self.dino_run = False
-            self.image_rect_y = 340
+            self.image_rect.y = 340
             self.dino_duck = True
             self.dino_jump = False
 
@@ -55,20 +55,20 @@ class Dinosaur(Sprite):
         self.step += 1
         if self.step > self.MAX_STEP : self.step = self.INITIAL_STEP
         self.dino_duck = False
-        self.image_rect_y = 300
+        self.image_rect.y = 300
         self.dino_run = True
 
     def jump(self):
         self.image = JUMPING
         if self.dino_jump:
-            self.image_rect_y -= self.dino_velocity * self.ACELERATION
+            self.image_rect.y -= self.dino_velocity * self.ACELERATION
             self.dino_velocity -= self.REDUCE_VELOCITY
         if self.dino_velocity < -self.INITIAL_VELOCITY:
-            self.image_rect_y = self.DINO_Y_POS
+            self.image_rect.y = self.DINO_Y_POS
             self.dino_jump = False
             self.dino_run = True
             self.dino_velocity = self.INITIAL_VELOCITY
 
 
     def draw(self, screen):
-        screen.blit(self.image, (self.image_rect_x, self.image_rect_y))
+        screen.blit(self.image, (self.image_rect.x, self.image_rect.y))
