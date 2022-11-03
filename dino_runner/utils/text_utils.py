@@ -1,6 +1,7 @@
 import pygame
 FONT_STYLE = 'freesansbold.ttf'
 BLACK_RGB = (0,0,0)
+WHITE_RGB = (255,255,255)
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 

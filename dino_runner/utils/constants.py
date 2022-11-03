@@ -69,4 +69,6 @@ BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 
+DINOSAUR_SCORE = pygame.image.load(os.path.join(IMG_DIR, 'Other/dinosaurs_score.png'))
+
 DEFAULT_TYPE = "default"

@@ -14,13 +14,15 @@ class Obstacle_handler():
 
     def __init__(self):
         self.obstacles = []
+        self.step = 0
+        self.number = 0
 
     def update (self, speed, dino):
         if len(self.obstacles) == 0:
-            number = random.randint(1,3)
-            if number == 1: self.obstacles.append(Bird(BIRD))
-            elif number == 2: self.obstacles.append(Cactus(LARGE_CACTUS))
-            elif number == 3: self.obstacles.append(Cactus(SMALL_CACTUS))
+            self.number = random.randint(1,3)
+            if self.number == 1: self.obstacles.append(Bird(BIRD))
+            elif self.number == 2: self.obstacles.append(Cactus(LARGE_CACTUS))
+            elif self.number == 3: self.obstacles.append(Cactus(SMALL_CACTUS))
 
             #self.obstacles.append(Bird(BIRD))
             #self.obstacles.append(Cactus(LARGE_CACTUS))
@@ -28,6 +30,11 @@ class Obstacle_handler():
 
         for obstacle in self.obstacles:
             obstacle.update(speed)
+
+            if self.number == 1:
+               obstacle.image = BIRD[0] if self.step <= 5 else BIRD[1]
+               self.step += 1
+               if self.step > 10 : self.step = 0
 
             if obstacle.image_rect.colliderect(dino.image_rect): ## dino.image_rect
                 pygame.time.delay(10)
