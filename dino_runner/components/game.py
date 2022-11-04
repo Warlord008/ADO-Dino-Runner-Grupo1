@@ -2,27 +2,16 @@ import pygame
 from dino_runner.components.obstacles.obstacle_handler import Obstacle_handler
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.clouds import Cloud
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINOSAUR_SCORE, DEAD
-from dino_runner.utils.constants import PLAY
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINOSAUR_SCORE, DEAD, PLAY, MAX_LIVES,PRE_LEVEL_MUSIC,BACKGROUND_MUSIC,GAME_OVER_SOUND,SPECIAL_FONT
 from dino_runner.utils.text_utils import BLACK_RGB, WHITE_RGB
 from dino_runner.utils import text_utils
+
 pygame.init()
-
-SPECIAL_FONT  = 'ADO-Dino-Runner-Grupo1/dino_runner/assets/Other/Font/airstrike.ttf'
-
 
 from dino_runner.components.power_ups.hearts_handler import heartmanager
 
 from pygame import mixer
 mixer.init()
-
-MAX_LIVES = 3
-BACKGROUND_MUSIC = mixer.music.load('ADO-Dino-Runner-Grupo1/dino_runner/assets/Music/03.wav')
-mixer.music.set_volume(0.2)
-PRE_LEVEL_MUSIC = mixer.Sound('ADO-Dino-Runner-Grupo1/dino_runner/assets/Music/level.wav')
-PRE_LEVEL_MUSIC.set_volume(0.2)
-GAME_OVER_SOUND = mixer.Sound('ADO-Dino-Runner-Grupo1/dino_runner/assets/Music/ominous.wav')
-GAME_OVER_SOUND.set_volume(0.2)
 
 class Game:
     def __init__(self):
@@ -120,6 +109,7 @@ class Game:
         self.x_pos_bg -= self.game_speed
 
     def draw_score(self):
+        
         self.points += 1
         message = "Points: " + str(self.points)
         points_text, points_rect = text_utils.get_text_element(message, SCREEN_WIDTH-75, 50)
@@ -137,11 +127,13 @@ class Game:
             self.game_speed += 1 
 
     def show_menu(self):
+
         self.running = True
         black_color = BLACK_RGB
         self.screen.fill(black_color)
         self.show_menu_options()
         pygame.display.update()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
