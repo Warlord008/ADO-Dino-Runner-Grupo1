@@ -1,6 +1,7 @@
 import pygame
 import os
 
+
 # Global Constants
 TITLE = "Chrome Dino Runner"
 SCREEN_HEIGHT = 600
@@ -10,6 +11,8 @@ IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 
 # Assets Constants
 ICON = pygame.image.load(os.path.join(IMG_DIR, "DinoWallpaper.png"))
+
+DEAD = pygame.image.load("ADO-Dino-Runner-Grupo1/dino_runner/assets/Dino/DinoDead.png")
 
 RUNNING = [
     pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoRun1.png")),
@@ -72,3 +75,5 @@ HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 DINOSAUR_SCORE = pygame.image.load(os.path.join(IMG_DIR, 'Other/dinosaurs_score.png'))
 
 DEFAULT_TYPE = "default"
+
+PLAY = pygame.image.load(os.path.join(IMG_DIR, 'Other/play.png'))

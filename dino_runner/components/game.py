@@ -2,11 +2,27 @@ import pygame
 from dino_runner.components.obstacles.obstacle_handler import Obstacle_handler
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.clouds import Cloud
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINOSAUR_SCORE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINOSAUR_SCORE, DEAD
+from dino_runner.utils.constants import PLAY
 from dino_runner.utils.text_utils import BLACK_RGB, WHITE_RGB
 from dino_runner.utils import text_utils
+pygame.init()
+
+SPECIAL_FONT  = 'ADO-Dino-Runner-Grupo1/dino_runner/assets/Other/Font/airstrike.ttf'
+
+
+from dino_runner.components.power_ups.hearts_handler import heartmanager
+
+from pygame import mixer
+mixer.init()
 
 MAX_LIVES = 3
+BACKGROUND_MUSIC = mixer.music.load('ADO-Dino-Runner-Grupo1/dino_runner/assets/Music/03.wav')
+mixer.music.set_volume(0.2)
+PRE_LEVEL_MUSIC = mixer.Sound('ADO-Dino-Runner-Grupo1/dino_runner/assets/Music/level.wav')
+PRE_LEVEL_MUSIC.set_volume(0.2)
+GAME_OVER_SOUND = mixer.Sound('ADO-Dino-Runner-Grupo1/dino_runner/assets/Music/ominous.wav')
+GAME_OVER_SOUND.set_volume(0.2)
 
 class Game:
     def __init__(self):
@@ -26,24 +42,35 @@ class Game:
         self.points = 0
         self.points_record = 100
         self.score_time = 400
-        self.lives = 3
+        self.lives = 5
+        self.game_over_sound_times = 1
+        self.dead_image = DEAD
+
+        self.player_heart_manager = heartmanager(self.lives)
 
     def reset_attibute(self):
         self.playing = True
         self.dinosaur = Dinosaur()
         self.obstacle_handler = Obstacle_handler()
-        self.lives = 3
+        self.lives = 5
         self.points = 0
+        self.game_over_sound_times = 1
+        self.game_speed = 20
 
     def execute(self):
         while self.running:
             if not self.playing:
+                mixer.music.stop()
                 self.show_menu()
 
     def run(self):
         # Game loop: events - update - draw
         self.reset_attibute()
+        times = 1
         while self.playing:
+            if times == 1:
+                mixer.music.play(-1)
+                times -= 1
             self.events()
             self.update()
             self.draw()
@@ -62,12 +89,12 @@ class Game:
         self.dinosaur.update(dino_event)
         self.cloud.update()
         self.update_score()
-        #self.obstacle_handler.update(self.game_speed, self.dinosaur)
 
         if self.lives == 0:
             self.playing = False
             self.running = True
             self.execute()
+
 
     def draw(self):
         self.clock.tick(FPS)
@@ -77,6 +104,9 @@ class Game:
         self.dinosaur.draw(self.screen)
         self.obstacle_handler.draw(self.screen)
         self.draw_score()
+
+        self.player_heart_manager.draw(self.screen)
+
         pygame.display.update()
         pygame.display.flip()
 
@@ -100,7 +130,7 @@ class Game:
             self.screen.blit(points_text, points_rect)
             self.screen.blit(DINOSAUR_SCORE, ((SCREEN_WIDTH//2)-70, 30))
         if self.points > self.points_record + 50:
-            self.points_record += 400 
+            self.points_record += 500 
 
     def update_score(self):
         if self.points % 100 ==0:
@@ -121,9 +151,24 @@ class Game:
                 exit()  
 
             if event.type == pygame.KEYDOWN:
+                PRE_LEVEL_MUSIC.stop()
                 self.run()
 
     def show_menu_options(self):
-        if self.points > 0: text, text_rect = text_utils.get_text_element("GAME OVER", font_size= 40, font_color= (255,255,255)) 
-        else: text, text_rect = text_utils.get_text_element("Press any key to start", font_size= 40, font_color= (255,255,255))
+        if self.points > 0: 
+            text, text_rect = text_utils.get_text_element("GAME OVER", font_size= 40, font_color= (255,255,255), font_style= SPECIAL_FONT) 
+            points, points_rect = text_utils.get_text_element("Your score was: "+str(self.points), pos_y= (SCREEN_HEIGHT//2) + 40,font_size= 40, font_color= (255,255,255), font_style= SPECIAL_FONT) 
+            self.screen.blit(points, points_rect)
+            self.screen.blit(self.dead_image, (text_rect.x+ 70, text_rect.y - 120))
+            if self.game_over_sound_times == 1:
+                GAME_OVER_SOUND.play()
+                pygame.time.delay(1500)
+                PRE_LEVEL_MUSIC.play()
+                self.game_over_sound_times -= 1
+        else: 
+            text, text_rect = text_utils.get_text_element("Press any key to start", font_size= 40, font_color= (255,255,255), font_style= SPECIAL_FONT)
+            self.screen.blit(PLAY, (SCREEN_WIDTH//2 -25, text_rect.y - 100))
+            if self.game_over_sound_times == 1:
+                PRE_LEVEL_MUSIC.play()
+                self.game_over_sound_times -= 1
         self.screen.blit(text, text_rect)
