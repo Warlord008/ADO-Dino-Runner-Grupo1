@@ -2,7 +2,7 @@ import pygame
 from dino_runner.components.obstacles.obstacle_handler import Obstacle_handler
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.clouds import Cloud
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINOSAUR_SCORE, DEAD, PLAY, MAX_LIVES,PRE_LEVEL_MUSIC,BACKGROUND_MUSIC,GAME_OVER_SOUND,SPECIAL_FONT
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINOSAUR_SCORE, DEAD, PLAY, MAX_LIVES,PRE_LEVEL_MUSIC,BACKGROUND_MUSIC,GAME_OVER_SOUND,SPECIAL_FONT, MOON_IMAGE, SUN_IMAGE
 from dino_runner.utils.text_utils import BLACK_RGB, WHITE_RGB
 from dino_runner.utils import text_utils
 
@@ -28,12 +28,13 @@ class Game:
         self.game_speed = 20
         self.x_pos_bg = 0
         self.y_pos_bg = 380
-        self.points = 0
+        self.points = 1
         self.points_record = 100
         self.score_time = 400
         self.lives = 5
         self.game_over_sound_times = 1
         self.dead_image = DEAD
+        self.night_mode = False
 
         self.player_heart_manager = heartmanager(self.lives)
 
@@ -42,9 +43,10 @@ class Game:
         self.dinosaur = Dinosaur()
         self.obstacle_handler = Obstacle_handler()
         self.lives = 5
-        self.points = 0
+        self.points = 1
         self.game_over_sound_times = 1
         self.game_speed = 20
+        self.night_mode = False
 
     def execute(self):
         while self.running:
@@ -84,10 +86,16 @@ class Game:
             self.running = True
             self.execute()
 
-
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((255, 255, 255))
+
+        if not self.night_mode: 
+            self.screen.fill((255, 255, 255))
+            self.screen.blit(SUN_IMAGE, (SCREEN_WIDTH - 100, 100))
+        else: 
+            self.screen.fill((56, 44, 59))
+            self.screen.blit(MOON_IMAGE, (SCREEN_WIDTH - 100, 100))
+
         self.draw_background()
         self.cloud.draw(self.screen)
         self.dinosaur.draw(self.screen)
@@ -109,10 +117,11 @@ class Game:
         self.x_pos_bg -= self.game_speed
 
     def draw_score(self):
-        
+
         self.points += 1
         message = "Points: " + str(self.points)
-        points_text, points_rect = text_utils.get_text_element(message, SCREEN_WIDTH-75, 50)
+        if self.night_mode: points_text, points_rect = text_utils.get_text_element(message, SCREEN_WIDTH-75, 50, font_color= (255,255,255))
+        else: points_text, points_rect = text_utils.get_text_element(message, SCREEN_WIDTH-75, 50)
         self.screen.blit(points_text, points_rect)
         if  (self.points >= self.points_record) and (self.points <= self.points_record + 50):
             message = "¡¡" + str(self.points_record)+ "!!"
@@ -125,6 +134,10 @@ class Game:
     def update_score(self):
         if self.points % 100 ==0:
             self.game_speed += 1 
+        if self.points % 300 == 0:
+            self.night_mode = True
+        elif self.points % 800 == 0:
+            self.night_mode = False
 
     def show_menu(self):
 
@@ -147,7 +160,7 @@ class Game:
                 self.run()
 
     def show_menu_options(self):
-        if self.points > 0: 
+        if self.points > 1: 
             text, text_rect = text_utils.get_text_element("GAME OVER", font_size= 40, font_color= (255,255,255), font_style= SPECIAL_FONT) 
             points, points_rect = text_utils.get_text_element("Your score was: "+str(self.points), pos_y= (SCREEN_HEIGHT//2) + 40,font_size= 40, font_color= (255,255,255), font_style= SPECIAL_FONT) 
             self.screen.blit(points, points_rect)
@@ -164,3 +177,6 @@ class Game:
                 PRE_LEVEL_MUSIC.play()
                 self.game_over_sound_times -= 1
         self.screen.blit(text, text_rect)
+    
+
+

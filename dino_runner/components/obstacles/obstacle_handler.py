@@ -22,20 +22,22 @@ class Obstacle_handler():
         self.number = 0
         self.luck_number = 0
         self.shield = False
-        self.sorted = False
+        self.shield_sorted = False
         self.hit_times = 3
 
     def update (self, game):
         if len(self.obstacles) == 0:
+
             self.number = random.randint(1,4)
             self.luck_number = random.randint(1, 10)
 
-            if (self.number == 4) and (self.luck_number == 10): self.sorted = True
-
+            if (self.number == 4) and (self.luck_number == 10): self.shield_sorted = True
+            else: self.shield_sorted= False
+            
             if self.number == 1: self.obstacles.append(Bird(BIRD))
             elif self.number == 2: self.obstacles.append(Cactus(LARGE_CACTUS))
             elif self.number == 3: self.obstacles.append(Cactus(SMALL_CACTUS))
-            elif self.sorted: self.obstacles.append(Shield(SHIELD))
+            elif self.shield_sorted: self.obstacles.append(Shield(SHIELD))
 
 
         for obstacle in self.obstacles:
@@ -46,18 +48,19 @@ class Obstacle_handler():
                self.step += 1
                if self.step > 10 : self.step = 0
 
-            if obstacle.image_rect.colliderect(game.dinosaur.image_rect) and not (self.sorted or self.shield): 
+            if obstacle.image_rect.colliderect(game.dinosaur.image_rect) and not self.shield_sorted and not self.shield: 
                 game.player_heart_manager.reduce_heart_count()
                 pygame.time.delay(10)
                 self.obstacles.clear()
                 DAMAGE_SOUND.play()
                 game.lives -= 1
-            elif obstacle.image_rect.colliderect(game.dinosaur.image_rect) and  (self.sorted):
+
+            elif obstacle.image_rect.colliderect(game.dinosaur.image_rect) and  self.shield_sorted and not self.shield:
                 BOOST_SOUND.play()
                 self.obstacles.clear()
                 self.shield = True
 
-            if obstacle.image_rect.colliderect(game.dinosaur.image_rect) and not (self.sorted) and self.shield:
+            elif obstacle.image_rect.colliderect(game.dinosaur.image_rect) and self.shield and not self.shield_sorted:
                 self.hit_times -= 1
                 self.obstacles.clear()
                 SHILED_DAMAGE.play()

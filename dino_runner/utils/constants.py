@@ -95,3 +95,6 @@ BOOST_SOUND = mixer.Sound('ADO-Dino-Runner-Grupo1/dino_runner/assets/Music/boost
 BOOST_SOUND.set_volume(0.2)
 SHILED_DAMAGE = mixer.Sound('ADO-Dino-Runner-Grupo1/dino_runner/assets/Music/shiledroze.wav')
 SHILED_DAMAGE.set_volume(0.2)
+
+SUN_IMAGE = pygame.image.load(os.path.join(IMG_DIR, 'Other/sun.png'))
+MOON_IMAGE = pygame.image.load(os.path.join(IMG_DIR, 'Other/night.png'))
